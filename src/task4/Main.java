@@ -4,19 +4,28 @@ import java.util.Scanner;
 public class Main {
     public static Scanner in = new Scanner(System.in);
     public static PrintStream out = System.out;
-    public static void main(String[] args) {
-        int n = in.nextInt(), k = in.nextInt();
-        int[] m = new int[n];
-        for(int i = 0; i < n; i++) m[i] = in.nextInt();
-        for(int i = 0; i < k; i++){
-            int last = m[0];
-            for(int j = 0; j < n-1; j++){
-                int el = m[j+1];
-                m[j+1] = last;
-                last = el;
-            }
-            m[0] = last;
+    private static void cyclicShift(int[] arr, int k) {
+        int n = arr.length;
+        reverseArray(arr, 0, n - 1);
+        reverseArray(arr, 0, k - 1);
+        reverseArray(arr, k, n - 1);
+    }
+    private static void reverseArray(int[] arr, int start, int end) {
+        while (start < end) {
+            int temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
         }
-        for(int i: m) out.print(i + " ");
+    }
+    public static void main(String[] args) {
+        int n = in.nextInt();
+        int k = in.nextInt();
+        int[] array = new int[n];
+        for (int i = 0; i < n; i++) array[i] = in.nextInt();
+        k = k % n;
+        if(k != 0) cyclicShift(array, k);
+        for(int i: array) out.print(i + " ");
     }
 }
