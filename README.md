@@ -317,7 +317,7 @@ public class Main {
 
 ---
 
-### 4. Циклический сдвиг
+## 4. Циклический сдвиг
 
 ### 4.1 Постановка задачи
 
@@ -346,22 +346,21 @@ public class Main {
 |-------------------|----------------|------------|----------------------|
 | Размер массива    | `n`            | `int`      | Количество элементов |
 | Сдвиг             | `k`            | `int`      | Количество позиций   |
-| Массив            | `m`            | `int[]`    | Хранит элементы      |
-| Временная         | `last`         | `int`      | Для обмена элементов |
-| Временная         | `el`           | `int`      | Для обмена элементов |
-| Счётчики циклов   | `i`, `j`       | `int`      | Управление циклами   |
+| Массив            | `array`        | `int[]`    | Хранит элементы      |
+| Начало подмассива | `start`        | `int`      | Начальный индекс     |
+| Конец подмассива  | `end`          | `int`      | Конечный индекс      |
+| Временная         | `temp`         | `int`      | Для обмена элементов |
+| Счётчик циклов    | `i`            | `int`      | Управление циклами   |
 
 ### 4.4 Алгоритм
 
-1. Считать `n`, `k` и заполнить массив `m`
-2. Выполнить `k` раз:
-   - Сохранить первый элемент в `last`
-   - Для каждого элемента от первого до предпоследнего:
-     - Сохранить следующий элемент в `el`
-     - Записать `last` в следующую позицию
-     - Присвоить `last = el`
-   - Записать `last` в первую позицию
-3. Вывести массив
+1. Считать `n`, `k` и заполнить массив `array`
+2. Нормализовать `k`: вычислить `k = k % n`
+3. Если `k ≠ 0`:
+   - Шаг 1: Реверс всего массива
+   - Шаг 2: Реверс первых `k` элементов
+   - Шаг 3: Реверс оставшихся `n-k` элементов
+4. Вывести массив
 
 ### 4.5 Программа
 
@@ -372,20 +371,29 @@ import java.util.Scanner;
 public class Main {
     public static Scanner in = new Scanner(System.in);
     public static PrintStream out = System.out;
-    public static void main(String[] args) {
-        int n = in.nextInt(), k = in.nextInt();
-        int[] m = new int[n];
-        for(int i = 0; i < n; i++) m[i] = in.nextInt();
-        for(int i = 0; i < k; i++){
-            int last = m[0];
-            for(int j = 0; j < n-1; j++){
-                int el = m[j+1];
-                m[j+1] = last;
-                last = el;
-            }
-            m[0] = last;
+    private static void cyclicShift(int[] arr, int k) {
+        int n = arr.length;
+        reverseArray(arr, 0, n - 1);
+        reverseArray(arr, 0, k - 1);
+        reverseArray(arr, k, n - 1);
+    }
+    private static void reverseArray(int[] arr, int start, int end) {
+        while (start < end) {
+            int temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
         }
-        for(int i: m) out.print(i + " ");
+    }
+    public static void main(String[] args) {
+        int n = in.nextInt();
+        int k = in.nextInt();
+        int[] array = new int[n];
+        for (int i = 0; i < n; i++) array[i] = in.nextInt();
+        k = k % n;
+        if(k != 0) cyclicShift(array, k);
+        for(int i: array) out.print(i + " ");
     }
 }
 ```
@@ -425,4 +433,16 @@ public class Main {
    Вход: 1 100
          42
    Выход: 42
+   ```
+
+6. **Тест 6:** Алгоритм с реверсом
+   ```
+   Вход: 6 2
+         1 2 3 4 5 6
+   Процесс:
+        Исходный: [1, 2, 3, 4, 5, 6]
+        Реверс всего: [6, 5, 4, 3, 2, 1]
+        Реверс первых 2: [5, 6, 4, 3, 2, 1]
+        Реверс остальных 4: [5, 6, 1, 2, 3, 4]
+   Выход: 5 6 1 2 3 4
    ```
